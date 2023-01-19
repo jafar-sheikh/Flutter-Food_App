@@ -9,6 +9,7 @@ import 'package:food_app/pages/home/home_page.dart';
 import 'package:food_app/pages/login.dart';
 import 'package:food_app/pages/home/Product_Overview/productOverview.dart';
 import 'package:food_app/pages/register_screen.dart';
+import 'package:food_app/providers/product_provider.dart';
 import 'package:food_app/utils/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -24,11 +25,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return ChangeNotifierProvider<ProductProvider>(
+      create: (context)=>ProductProvider(),
+      child: MaterialApp(
 
-      debugShowCheckedModeBanner: false,
-      theme: myThemeData(),
-      home: HomeScreen(),
+        debugShowCheckedModeBanner: false,
+        theme: myThemeData(),
+        home: HomeScreen(),
+      ),
     );
   }
 }

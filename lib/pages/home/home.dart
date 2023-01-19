@@ -1,143 +1,53 @@
-
-
 import 'package:badges/badges.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:food_app/pages/home/Search/search.dart';
+import 'package:food_app/pages/home/drawer_side.dart';
 import 'package:food_app/pages/home/single_product.dart';
 import 'package:food_app/pages/home/Product_Overview/productOverview.dart';
+import 'package:food_app/providers/product_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-   HomeScreen({Key? key}) : super(key: key);
-  static  String routeName = '/home_screen';
-
+  HomeScreen({Key? key}) : super(key: key);
+  static String routeName = '/home_screen';
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-  Widget listTile({ required IconData icon , required String title}){
-    return ListTile(
-      leading: Icon(
-        icon,size: 30,
-      ),
-      title: Text(title,style: TextStyle(color: Colors.black45,fontSize: 20,),
-    ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
-        drawer: Drawer(
-          child: Container(
-            color: Color(0xffd1ad17),
-            child: ListView(
-              children: [
-                DrawerHeader(
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 43,
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.cyan,
-                          // backgroundImage: Image.asset('assets/images/jafar.jpg'),
-                        ),
-                      ),
-                      //SizedBox(height: 7,),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 3),
-                            child: Text(
-                              'Welcome to My Food App',
-                              style: TextStyle(fontSize: 15),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 7,
-                          ),
-                          Container(
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              child: Text(
-                                'Login',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                listTile(icon: Icons.home, title: "Home"),
-                listTile(icon: Icons.shop_rounded, title: "Review Cart"),
-                listTile(icon: Icons.person_outline, title: "My Profile"),
-                listTile(icon: Icons.notifications_outlined, title: "Notification"),
-                listTile(icon: Icons.star_outline, title: "Rating & Review"),
-                listTile(icon: Icons.favorite_outlined, title: "Wishlist"),
-                listTile(icon: Icons.copy_outlined, title: "Raise a Complaint"),
-                listTile(icon: Icons.format_quote_outlined, title: "FAQs"),
-
-                Container(
-                  margin: EdgeInsets.only(left: 10),
-                  height: 200,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Contact Support',style: TextStyle(fontSize: 17,color: Colors.black45),),
-                      SizedBox(height: 10,),
-                      Row(
-
-                        children: [
-                          Text('Coll us :',style: TextStyle(fontSize: 17,color: Colors.black45)),
-                          SizedBox(width: 10,),
-                          Text('01734940346',style: TextStyle(fontSize: 17,color: Colors.black45)),
-                        ],
-                      ),
-                      SizedBox(height: 5,),
-                      Row(
-                        children: [
-                          Text('Mail us :',style: TextStyle(fontSize: 17,color: Colors.black45)),
-                          SizedBox(width: 10,),
-                          Text('jafar.sheikh2021@gmail.com',style: TextStyle(fontSize: 15,color: Colors.black45)),
-                        ],
-                      ),
-                      SizedBox(height: 20,),
-                      Container(
-                        child: Text('Developed By Abu jafar',style: TextStyle(fontSize: 20,color: Colors.red,fontWeight: FontWeight.bold),),
-
-                      ),
-                    ],
-
-                  ),
-
-                ),
-              ],
-            ),
-          ),
-        ),
+        drawer: DrawerSide(),
         appBar: AppBar(
-          title: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search',
-              prefixIcon: Icon(
-                Icons.search,
-                color: Colors.black,
-              ),
-            ),
+          title: Text(
+            'Home Page',
+            style: TextStyle(fontSize: 20),
+            textAlign: TextAlign.start,
           ),
           actions: [
+            SizedBox(
+              width: 8,
+            ),
+            CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.white,
+                child: IconButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Search(),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.search,
+                      size: 20,
+                    ))),
             SizedBox(
               width: 8,
             ),
@@ -179,11 +89,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class BodyPage extends StatelessWidget {
+class BodyPage extends StatefulWidget {
   const BodyPage({Key? key}) : super(key: key);
 
   @override
+  State<BodyPage> createState() => _BodyPageState();
+}
+
+class _BodyPageState extends State<BodyPage> {
+  ProductProvider? productProvider;
+
+  @override
+  void initState() {
+    ProductProvider productProvider = Provider.of(context, listen: false);
+    productProvider.fatchHerbsProductData();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    productProvider = Provider.of(context);
     return ListView(
       children: [
         Container(
@@ -293,24 +218,22 @@ class BodyPage extends StatelessWidget {
             scrollDirection: Axis.horizontal,
           ),
         ),
-
         _buildHerbsProduct(context),
         SizedBox(
           height: 10,
         ),
-        _buildFruitProduct(context),
+        // _buildFruitProduct(context),
         SizedBox(
           height: 10,
         ),
-        _buildRootProduct(context),
-
-
+        // _buildRootProduct(context),
       ],
     );
   }
+
   // Herbla details
-  Widget _buildHerbsProduct(context){
-    return  Column(
+  Widget _buildHerbsProduct(context) {
+    return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -323,9 +246,7 @@ class BodyPage extends StatelessWidget {
               'view all ',
               style: TextStyle(fontSize: 20, color: Colors.amber),
             ),
-
           ],
-
         ),
         SizedBox(
           height: 10,
@@ -333,196 +254,233 @@ class BodyPage extends StatelessWidget {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [
-
-              SingleProduct(
-                onTap1: (){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ProductOverview(),),);
-                  // Navigator.pushNamed(context, ProductOverview.routeName);
-                  //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=> ProductOverview()));
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SingleProduct(
-                onTap1: (){
-                  // Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SingleProduct(
-                onTap1: (){
-                  // Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SingleProduct(
-                onTap1: (){
-                  //Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-  // Fruits details
-  Widget _buildFruitProduct(context){
-    return  Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Fresh Fruits ',
-              style: TextStyle(fontSize: 20, color: Colors.amber),
-            ),
-            Text(
-              'view all ',
-              style: TextStyle(fontSize: 20, color: Colors.amber),
-            ),
-
-          ],
-
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-
-              SingleProduct(
-                onTap1: (){
-                   //Navigator.pushNamed(context, ProductOverview.routeName);
-
-
-                },
-                productName: 'Fresh Apple',
-                productImage: 'https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg',
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SingleProduct(
-                onTap1: (){
-                  // Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SingleProduct(
-                onTap1: (){
-                  // Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SingleProduct(
-                onTap1: (){
-                  //Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-  Widget _buildRootProduct(context){
-    return  Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Fresh Roots ',
-              style: TextStyle(fontSize: 20, color: Colors.amber),
-            ),
-            Text(
-              'view all ',
-              style: TextStyle(fontSize: 20, color: Colors.amber),
-            ),
-
-          ],
-
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-
-              SingleProduct(
-                onTap1: (){
-                  // Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Root',
-                productImage: 'https://balconygardenweb-lhnfx0beomqvnhspx.netdna-ssl.com/wp-content/uploads/2021/08/2.-Daikon2.jpg',
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SingleProduct(
-                onTap1: (){
-                  // Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SingleProduct(
-                onTap1: (){
-                  // Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              SingleProduct(
-                onTap1: (){
-                  //Navigator.pushNamed(context, ProductOverview.routeName);
-                },
-                productName: 'Fresh Basil',
-                productImage: 'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
-              ),
-            ],
+            children: productProvider!.getHerbsProductDataList.map(
+              (herbsProductData) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SingleProduct(
+                    onTap1: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ProductOverview(
+                            productName: herbsProductData.productName!,
+                            productImage: herbsProductData.productImage!,
+                            productPrice: herbsProductData.productPrice!,
+                          ),
+                        ),
+                      );
+                      // Navigator.pushNamed(context, ProductOverview.routeName);
+                      //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=> ProductOverview()));
+                    },
+                    productName: herbsProductData.productName!,
+                    productImage: herbsProductData.productImage!,
+                    productPrice: herbsProductData.productPrice!,
+                  ),
+                );
+              },
+            ).toList(),
           ),
         ),
       ],
     );
   }
 
+// Fruits details
+// Widget _buildFruitProduct(context) {
+//   return Column(
+//     children: [
+//       Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           Text(
+//             'Fresh Fruits ',
+//             style: TextStyle(fontSize: 20, color: Colors.amber),
+//           ),
+//           Text(
+//             'view all ',
+//             style: TextStyle(fontSize: 20, color: Colors.amber),
+//           ),
+//         ],
+//       ),
+//       SizedBox(
+//         height: 10,
+//       ),
+//       SingleChildScrollView(
+//         scrollDirection: Axis.horizontal,
+//         child: Row(
+//           children: [
+//             SingleProduct(
+//               onTap1: () {
+//                 Navigator.of(context).push(
+//                   MaterialPageRoute(
+//                     builder: (context) => ProductOverview(
+//                       productName: 'Fresh Apple',
+//                       productImage:
+//                           'https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg',
+//                     ),
+//                   ),
+//                 );
+//               },
+//               productName: 'Fresh Apple',
+//               productImage:
+//                   'https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg',
+//             ),
+//             SizedBox(
+//               width: 10,
+//             ),
+//             SingleProduct(
+//               onTap1: () {
+//                 Navigator.of(context).push(
+//                   MaterialPageRoute(
+//                     builder: (context) => ProductOverview(
+//                       productName: 'Fresh Apple',
+//                       productImage:
+//                           'https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg',
+//                     ),
+//                   ),
+//                 );
+//               },
+//               productName: 'Fresh Basil',
+//               productImage:
+//                   'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
+//             ),
+//             SizedBox(
+//               width: 10,
+//             ),
+//             SingleProduct(
+//               onTap1: () {
+//                 Navigator.of(context).push(
+//                   MaterialPageRoute(
+//                     builder: (context) => ProductOverview(
+//                       productName: 'Fresh Apple',
+//                       productImage:
+//                           'https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg',
+//                     ),
+//                   ),
+//                 );
+//               },
+//               productName: 'Fresh Basil',
+//               productImage:
+//                   'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
+//             ),
+//             SizedBox(
+//               width: 10,
+//             ),
+//             SingleProduct(
+//               onTap1: () {
+//                 Navigator.of(context).push(
+//                   MaterialPageRoute(
+//                     builder: (context) => ProductOverview(
+//                       productName: 'Fresh Apple',
+//                       productImage:
+//                           'https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg',
+//                     ),
+//                   ),
+//                 );
+//               },
+//               productName: 'Fresh Basil',
+//               productImage:
+//                   'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
+//             ),
+//           ],
+//         ),
+//       ),
+//     ],
+//   );
+// }
 
+//   Widget _buildRootProduct(context) {
+//     return Column(
+//       children: [
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             Text(
+//               'Fresh Roots ',
+//               style: TextStyle(fontSize: 20, color: Colors.amber),
+//             ),
+//             Text(
+//               'view all ',
+//               style: TextStyle(fontSize: 20, color: Colors.amber),
+//             ),
+//           ],
+//         ),
+//         SizedBox(
+//           height: 10,
+//         ),
+//         SingleChildScrollView(
+//           scrollDirection: Axis.horizontal,
+//           child: Row(
+//             children: [
+//               SingleProduct(
+//                 onTap1: () {
+//                   Navigator.of(context).push(
+//                     MaterialPageRoute(
+//                       builder: (context) => ProductOverview(
+//                         productName: 'Fresh Root',
+//                         productImage:
+//                             'https://balconygardenweb-lhnfx0beomqvnhspx.netdna-ssl.com/wp-content/uploads/2021/08/2.-Daikon2.jpg',
+//                       ),
+//                     ),
+//                   );
+//                 },
+//                 productName: 'Fresh Root',
+//                 productImage:
+//                     'https://balconygardenweb-lhnfx0beomqvnhspx.netdna-ssl.com/wp-content/uploads/2021/08/2.-Daikon2.jpg',
+//               ),
+//               SizedBox(
+//                 width: 10,
+//               ),
+//               SingleProduct(
+//                 onTap1: () {
+//                   // Navigator.pushNamed(context, ProductOverview.routeName);
+//                 },
+//                 productName: 'Fresh Basil',
+//                 productImage:
+//                     'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
+//               ),
+//               SizedBox(
+//                 width: 10,
+//               ),
+//               SingleProduct(
+//                 onTap1: () {
+//                   Navigator.of(context).push(
+//                     MaterialPageRoute(
+//                       builder: (context) => ProductOverview(
+//                         productName: 'Fresh Basil',
+//                         productImage:
+//                             'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
+//                       ),
+//                     ),
+//                   );
+//                 },
+//                 productName: 'Fresh Basil',
+//                 productImage:
+//                     'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
+//               ),
+//               SizedBox(
+//                 width: 10,
+//               ),
+//               SingleProduct(
+//                 onTap1: () {
+//                   Navigator.of(context).push(
+//                     MaterialPageRoute(
+//                       builder: (context) => ProductOverview(
+//                         productName: 'Fresh Basil',
+//                         productImage:
+//                             'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
+//                       ),
+//                     ),
+//                   );
+//                 },
+//                 productName: 'Fresh Basil',
+//                 productImage:
+//                     'https://www.pngitem.com/pimgs/m/421-4217380_transparent-background-vegetables-png-png-download.png',
+//               ),
+//             ],
+//           ),
+//         ),
+//       ],
+//     );
+//   }
 }
-
-

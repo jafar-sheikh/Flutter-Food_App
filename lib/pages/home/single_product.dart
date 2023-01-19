@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 class SingleProduct extends StatelessWidget {
 
 
-   String productName;
-   String productImage;
+   String? productName;
+   String? productImage;
+   String? productPrice;
    Function onTap1;
 
 
-   SingleProduct({required this.productName,required this.productImage,required this.onTap1});
+   SingleProduct({required this.productName,required this.productImage,required this.onTap1,required this.productPrice});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class SingleProduct extends StatelessWidget {
               height: 150,
              // padding: EdgeInsets.all(5),
               width: double.infinity,
-              child: Image.network(productImage,fit: BoxFit.cover,),
+              child: Image.network(productImage!,fit: BoxFit.fitHeight,),
             ),
           ),
 
@@ -43,14 +44,14 @@ class SingleProduct extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    productName,
+                    productName!,
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 20),
                   ),
                   Text(
-                    '50 Tk/50 Gram',
+                  productPrice!,
                     style: TextStyle(color: Colors.green, fontSize: 15),
                   ),
                   SizedBox(
